@@ -28,14 +28,28 @@ cache:
 
 script:
   - jabba use "adopt@1.8.192-12"
-  # need to override as the default is to test
-  - sbt -jvm-opts .jvmopts-travis ++$TRAVIS_SCALA_VERSION update mimaReportBinaryIssues test:compile
-  # make 'git branch' work again
-  - git branch -f "$TRAVIS_BRANCH" && git checkout "$TRAVIS_BRANCH"
-  # check policies, if on master also upload
-  - if [[ "$TRAVIS_SECURE_ENV_VARS" == "true" ]]; then if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_EVENT_TYPE" == "push" ]]; then sbt 'set credentials += Credentials("whitesource", "whitesourcesoftware.com", "", System.getenv("WHITESOURCE_KEY"))' whitesourceCheckPolicies whitesourceUpdate; else sbt 'set credentials += Credentials("whitesource", "whitesourcesoftware.com", "", System.getenv("WHITESOURCE_KEY"))' whitesourceCheckPolicies; fi ; fi
+  # # need to override as the default is to test
+  # - sbt -jvm-opts .jvmopts-travis ++$TRAVIS_SCALA_VERSION update mimaReportBinaryIssues test:compile
+  # # make 'git branch' work again
+  # - git branch -f "$TRAVIS_BRANCH" && git checkout "$TRAVIS_BRANCH"
+  # # check policies, if on master also upload
+  # - if [[ "$TRAVIS_SECURE_ENV_VARS" == "true" ]]; then if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_EVENT_TYPE" == "push" ]]; then sbt 'set credentials += Credentials("whitesource", "whitesourcesoftware.com", "", System.getenv("WHITESOURCE_KEY"))' whitesourceCheckPolicies whitesourceUpdate; else sbt 'set credentials += Credentials("whitesource", "whitesourcesoftware.com", "", System.getenv("WHITESOURCE_KEY"))' whitesourceCheckPolicies; fi ; fi
+  - sbt -jvm-opts .jvmopts-travis ... paradox
 
-env:
-  global:
-    # encrypt with: travis encrypt WHITESOURCE_KEY=...
-    - secure: "L/wJ7TbgY+oPULgbv+giFZejnQERfv/8/9Ex/nwRni8qnpxw5Q6BqB86Sch6b79irQiOdb+hr2tq3/m3KzXjC58xppRPfnmXsu3yI9XAln9WPi/sPvqUL8WPJmRfGswAw3L8w2JdD9VBP4iv0dWpRghGD27iqgipVRdN62PU+nU="
+after_script:
+  - cd ./akka-docs/target/paradox/site/main
+  - git init
+  - echo "akka.mengxin.science" > CNAME
+  - git config user.name "xmeng1"
+  - git config user.email "xmeng1@outlook.com"
+  - git add .
+  - git commit -m "Update akka original doc"
+  - git push --force --quiet "https://f17a6a0bd2d1f963cdacae56155c373b47810743@github.com/xmeng1/akka-doc.git" master:gh-pages
+
+# env:
+#   global:
+#     # encrypt with: travis encrypt WHITESOURCE_KEY=...
+#     - secure: "L/wJ7TbgY+oPULgbv+giFZejnQERfv/8/9Ex/nwRni8qnpxw5Q6BqB86Sch6b79irQiOdb+hr2tq3/m3KzXjC58xppRPfnmXsu3yI9XAln9WPi/sPvqUL8WPJmRfGswAw3L8w2JdD9VBP4iv0dWpRghGD27iqgipVRdN62PU+nU="
+branches:
+  only:
+    - docs-cn
