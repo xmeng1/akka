@@ -37,6 +37,7 @@ script:
   - sbt -jvm-opts .jvmopts-travis paradox
 
 after_script:
+  - ls ./akka-docs/target/paradox/site/main
   - cd ./akka-docs/target/paradox/site/main
   - git init
   - echo "akka.mengxin.science" > CNAME
