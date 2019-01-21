@@ -19,5 +19,5 @@
 * [howto](howto.md)
 * [project/index](project/index.md)
 * [additional/index](additional/index.md)
-
+* [chinese/index](chinese/index.md)
 @@@
