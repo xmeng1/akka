@@ -6,6 +6,6 @@
 
 @@@ index
 
- * [introduction](introduction.md)
+ * [协同翻译者](contribution.md)
  * 
 @@@
