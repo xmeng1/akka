@@ -35,6 +35,7 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   contrib,
   distributedData,
   docs,
+  docsCn,
   multiNodeTestkit,
   osgi,
   persistence, persistenceQuery, persistenceShared, persistenceTck,
@@ -58,7 +59,7 @@ lazy val root = Project(
  .settings(unidocRootIgnoreProjects :=
    (CrossVersion.partialVersion(scalaVersion.value) match {
      case Some((2, n)) if n == 11 ⇒ aggregatedProjects // ignore all, don't unidoc when scalaVersion is 2.11
-     case _                       ⇒ Seq(remoteTests, benchJmh, protobuf, akkaScalaNightly, docs)
+     case _                       ⇒ Seq(remoteTests, benchJmh, protobuf, akkaScalaNightly, docs, docsCn)
    })
  )
  .settings(
@@ -201,6 +202,61 @@ lazy val distributedData = akkaModule("akka-distributed-data")
   .enablePlugins(MultiNodeScalaTest)
 
 lazy val docs = akkaModule("akka-docs")
+  .dependsOn(
+    actor, cluster, clusterMetrics, slf4j, agent, osgi, persistenceTck, persistenceQuery, distributedData, stream, actorTyped,
+    camel % "compile->compile;test->test",
+    clusterTools % "compile->compile;test->test",
+    clusterSharding % "compile->compile;test->test",
+    testkit % "compile->compile;test->test",
+    remote % "compile->compile;test->test",
+    persistence % "compile->compile;test->test",
+    actorTyped % "compile->compile;test->test",
+    persistenceTyped % "compile->compile;test->test",
+    clusterTyped % "compile->compile;test->test",
+    clusterShardingTyped % "compile->compile;test->test",
+    actorTypedTests % "compile->compile;test->test",
+    streamTestkit % "compile->compile;test->test"
+  )
+  .settings(Dependencies.docs)
+  .settings(
+    name in (Compile, paradox) := "Akka",
+    paradoxProperties ++= Map(
+      "akka.canonical.base_url" -> "http://doc.akka.io/docs/akka/current",
+      "github.base_url" -> GitHub.url(version.value), // for links like this: @github[#1](#1) or @github[83986f9](83986f9)
+      "extref.akka.http.base_url" -> "http://doc.akka.io/docs/akka-http/current/%s",
+      "extref.wikipedia.base_url" -> "https://en.wikipedia.org/wiki/%s",
+      "extref.github.base_url" -> (GitHub.url(version.value) + "/%s"), // for links to our sources
+      "extref.samples.base_url" -> "https://developer.lightbend.com/start/?group=akka&project=%s",
+      "extref.ecs.base_url" -> "https://example.lightbend.com/v1/download/%s",
+      "scaladoc.akka.base_url" -> "https://doc.akka.io/api/akka/2.5",
+      "scaladoc.akka.http.base_url" -> "https://doc.akka.io/api/akka-http/current",
+      "javadoc.akka.base_url" -> "https://doc.akka.io/japi/akka/2.5",
+      "javadoc.akka.http.base_url" -> "http://doc.akka.io/japi/akka-http/current",
+      "scala.version" -> scalaVersion.value,
+      "scala.binary_version" -> scalaBinaryVersion.value,
+      "akka.version" -> version.value,
+      "sigar_loader.version" -> "1.6.6-rev002",
+      "algolia.docsearch.api_key" -> "543bad5ad786495d9ccd445ed34ed082",
+      "algolia.docsearch.index_name" -> "akka_io",
+      "google.analytics.account" -> "UA-21117439-1",
+      "google.analytics.domain.name" -> "akka.io",
+      "signature.akka.base_dir" -> (baseDirectory in ThisBuild).value.getAbsolutePath,
+      "fiddle.code.base_dir" -> (sourceDirectory in Test).value.getAbsolutePath,
+      "fiddle.akka.base_dir" -> (baseDirectory in ThisBuild).value.getAbsolutePath,
+    ),
+    paradoxGroups := Map("Language" -> Seq("Scala", "Java")),
+    resolvers += Resolver.jcenterRepo,
+    deployRsyncArtifact := List((paradox in Compile).value -> s"www/docs/akka/${version.value}")
+  )
+  .enablePlugins(
+    AkkaParadoxPlugin, DeployRsync, NoPublish, ParadoxBrowse,
+    ScaladocNoVerificationOfDiagrams,
+    StreamOperatorsIndexGenerator)
+  .settings(ParadoxSupport.paradoxWithCustomDirectives)
+  .disablePlugins(MimaPlugin, WhiteSourcePlugin)
+  .disablePlugins(ScalafixPlugin)
+
+lazy val docsCn = akkaModule("akka-docs-cn")
   .dependsOn(
     actor, cluster, clusterMetrics, slf4j, agent, osgi, persistenceTck, persistenceQuery, distributedData, stream, actorTyped,
     camel % "compile->compile;test->test",

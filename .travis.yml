@@ -46,7 +46,16 @@ after_script:
   - git add .
   - git commit -m "Update akka original doc"
   - git push --force --quiet "https://xmeng1:${GH_TOKEN}@github.com/xmeng1/akka-doc.git" master:gh-pages
-
+  - cd ..
+  - ls ./akka-docs-cn/target/paradox/site/main
+  - cd ./akka-docs-cn/target/paradox/site/main
+  - git init
+  - echo "akka-cn.mengxin.science" > CNAME
+  - git config user.name "xmeng1"
+  - git config user.email "xmeng1@outlook.com"
+  - git add .
+  - git commit -m "Update akka Chinese version doc"
+  - git push --force --quiet "https://xmeng1:${GH_TOKEN}@github.com/xmeng1/akka-doc-cn.git" master:gh-pages
 # env:
 #   global:
 #     # encrypt with: travis encrypt WHITESOURCE_KEY=...
