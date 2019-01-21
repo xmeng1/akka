@@ -45,7 +45,8 @@ after_script:
   - git config user.email "xmeng1@outlook.com"
   - git add .
   - git commit -m "Update akka original doc"
-  - git push --force --quiet "https://f17a6a0bd2d1f963cdacae56155c373b47810743@github.com/xmeng1/akka-doc.git" master:gh-pages
+  - git push --force --quiet "https://xmeng1:f17a6a0bd2d1f963cdacae56155c373b47810743@github.com/xmeng1/akka-doc.git" master:gh-pages
+  # https://xmeng1:f17a6a0bd2d1f963cdacae56155c373b47810743@github.com/xmeng1/akka-doc.git
 
 # env:
 #   global:
